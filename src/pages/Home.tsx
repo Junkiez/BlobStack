@@ -1,7 +1,6 @@
 import {
     Card,
     Icon,
-    TextInput,
     Table,
     TableHead,
     MultiSelect,
@@ -12,7 +11,6 @@ import {
     DownloadIcon,
     FolderIcon,
     PencilIcon,
-    SearchIcon,
     TrashIcon,
     UploadIcon
 } from "@heroicons/react/outline";
@@ -24,6 +22,7 @@ import FileObject from "../models/IFileObject.ts";
 import useBucket from "../hooks/useBucket.ts";
 import {deleteFile, readFile} from "../lib/api/fileActions.ts";
 import useFlatFetch from "../hooks/useFlatFetch.ts";
+import useSearch from "../hooks/useSearch.tsx";
 
 function CustomTableHead() {
     return (
@@ -44,13 +43,13 @@ function CustomTableHead() {
 export default function Home() {
     const [selectedNames, setSelectedNames] = useState<string[]>([]);
     const [editingFile, setEditingFile] = useState<string>("");
-    const [searchQuery, setSearchQuery] = useState<string>("");
+    const [searchQuery, Search] = useSearch();
     const [directory, setDirectory] = useState("");
     const [addDirectoryModal, setAddDirectoryModal] = useState<boolean>(false);
     const [addFileModal, setAddFileModal] = useState<boolean>(false);
     const [editFileModal, setEditFileModal] = useState<boolean>(false);
     const isTypeSelected = (f: FileObject) => (f.metadata && selectedNames.includes(f.metadata.mimetype)) || (!f.metadata && selectedNames.includes('folder')) || selectedNames.length === 0;
-    const isSearched = (f: FileObject) => (f.name.includes(searchQuery));
+    const isSearched = (f: FileObject) => (f.name.includes(searchQuery as string));
 
     const [files, setFiles] = useState<FileObject[] | null>()
 
@@ -80,12 +79,7 @@ export default function Home() {
         <>
             <div className="h-full w-full p-2 space-y-2">
                 <div className="h-[10vh] w-full flex items-center justify-between">
-                    <TextInput icon={SearchIcon}
-                               placeholder="Search..."
-                               className="w-64"
-                               value={searchQuery}
-                               onChange={e => setSearchQuery(e.target.value)}
-                    />
+                    {Search}
                     <User/>
                 </div>
                 <Card className="grow">

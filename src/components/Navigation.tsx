@@ -1,5 +1,5 @@
 import {Link} from "@tanstack/react-router";
-import icon from "../../public/icon.svg";
+import icon from "../assets/icon.svg";
 import {Icon} from "@tremor/react";
 import {
     MenuIcon,
@@ -9,6 +9,7 @@ import {
     HomeIcon,
     PhotographIcon
 } from "@heroicons/react/outline";
+import {useEffect, useRef, useState} from "react";
 
 const links = [
     {
@@ -38,18 +39,40 @@ const links = [
     },
 ]
 export default function Navigation() {
+    const [sidebarOpen, setSidebarOpen] = useState(false);
+    const sidebarRef = useRef(null);
+
+    const toggleSidebar = (e: { stopPropagation: () => void; }) => {
+        e.stopPropagation();
+        setSidebarOpen(!sidebarOpen);
+    };
+
+    useEffect(() => {
+        const closeSidebar = () => {
+            setSidebarOpen(false);
+        };
+
+        document.addEventListener('click', closeSidebar);
+
+        return () => {
+            document.removeEventListener('click', closeSidebar);
+        };
+    }, [sidebarRef]);
+
     return (
         <>
             <button data-drawer-target="logo-sidebar" data-drawer-toggle="logo-sidebar" aria-controls="logo-sidebar"
                     type="button"
-                    className="inline-flex items-center p-2 mt-2 ms-3 text-sm text-gray-500 rounded-lg sm:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600">
+                    onClick={toggleSidebar}
+                    className="absolute left-0 top-[5vh] -translate-y-1/2 items-center p-2 mt-2 ms-3 text-sm text-gray-500 rounded-lg sm:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600">
                 <span className="sr-only">Open sidebar</span>
                 <Icon icon={MenuIcon}/>
             </button>
 
-            <aside id="logo-sidebar"
-                   className="fixed md:relative top-0 left-0 z-40 min-w-64 h-screen transition-transform -translate-x-full sm:translate-x-0"
-                   aria-label="Sidebar">
+            <aside ref={sidebarRef} id="logo-sidebar" onClick={e=>e.stopPropagation()}
+                   className={`fixed md:relative top-0 left-0 z-40 min-w-64 h-screen transition-transform ${
+                       sidebarOpen ? '' : '-translate-x-full sm:translate-x-0'
+                   }`} aria-label="Sidebar">
                 <div className="h-full px-3 py-4 overflow-y-auto bg-gray-50 dark:bg-gray-800">
                     <div className="flex items-center ps-2.5 mb-5">
                         <img src={icon} className="h-6 me-3 sm:h-7"

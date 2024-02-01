@@ -7,7 +7,7 @@ export default function useSearch() {
 
     return [searchQuery, <TextInput icon={SearchIcon}
         placeholder="Search..."
-        className="w-64"
+        className="ml-12 md:ml-0 w-36 md:w-64"
         value={searchQuery}
         onChange={e => setSearchQuery(e.target.value)}/>]
 }
